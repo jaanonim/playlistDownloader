@@ -39,7 +39,7 @@ class MusicDownloader:
 
     def loop(self):
         print(f"Will donwload {len(self.queue)} videos.")
-        bar = IncrementalBar("Loading videos ", max=len(self.queue))
+        bar = IncrementalBar("Downloading videos ", max=len(self.queue))
 
         while len(self.queue) > 0:
             url, id, title = self.queue[0]
