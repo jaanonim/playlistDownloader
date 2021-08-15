@@ -60,8 +60,7 @@ def analizeVideos(videos, bar):
 
 
 def main():
-    # url = input("Enter playlist url: ")
-    url = "https://www.youtube.com/playlist?list=PLWY-qomjS4TN6Ejw3_aleGjynl_ZUwPtk"
+    url = input("Enter playlist url: ")
     playlist(url)
     MusicDownloader.getInstance().loop()
     print("Done!")
