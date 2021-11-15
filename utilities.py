@@ -10,9 +10,10 @@ def split_list(alist, wanted_parts=1):
 
 
 def calculate_amount_of_threads(list_len):
+    #return 1
     a = (int)(list_len / 10)
     if a > MAX_THREDS:
         return MAX_THREDS
     if a < 1:
         return 1
-    return a
+    return a+1

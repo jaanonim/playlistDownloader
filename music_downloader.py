@@ -2,7 +2,7 @@ import concurrent.futures
 import os
 import string
 
-import requests
+import youtube_dl
 from progress.bar import IncrementalBar
 from youtubesearchpython import *
 
@@ -26,19 +26,14 @@ class MusicDownloader:
 
         self.queue = []
 
-    def get_fetcher(self):
-        return StreamURLFetcher()
-
     def get_file(self, title):
         for f in os.listdir("download"):
-            if f.startswith(title) and f.endswith(".webm"):
+            if f.startswith(title) and f.endswith(".mp3"):
                 return "download/" + f
         return None
 
-    def add_to_queue(self, id, title, fetcher):
-        video = Video.get(f"https://www.youtube.com/watch?v={id}")
-        url = fetcher.get(video, 251)
-        self.queue.append((url, id, title))
+    def add_to_queue(self, id, title):
+        self.queue.append((id, title))
 
     def loop(self):
         q_len = len(self.queue)
@@ -61,13 +56,42 @@ class MusicDownloader:
 
     def downloadVideos(self, queue, bar):
         for element in queue:
-            url, id, title = element
-
             bar.next()
 
-            r = requests.get(url, allow_redirects=True)
-            open(f"download/{title}.webm", "wb").write(r.content)
+            id, title = element
+
+            ydl_opts = {
+                "format": "bestaudio/best",
+                "postprocessors": [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "mp3",
+                        "preferredquality": "192",
+                    }
+                ],
+                "outtmpl": f"download/{title}.mp3",
+                "logger": MyLogger(),
+            }
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                try:
+                    ydl.download([f"https://www.youtube.com/watch?v={id}"])
+                except:
+                    pass
+            # print(url)
+            # r = requests.get(url, allow_redirects=True)
+            # print(r)      # open(f"download/{title}.webm", "wb").write(r.content)
 
     def format_title(self, title):
         valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
         return "".join(c for c in title if c in valid_chars)
+
+
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        print("ERROR:", msg)

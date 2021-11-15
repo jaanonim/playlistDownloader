@@ -7,9 +7,9 @@ from music_downloader import MusicDownloader
 from utilities import *
 
 
-def add_to_queue(id, title, fetcher):
+def add_to_queue(id, title):
     if not MusicDownloader.getInstance().get_file(title):
-        MusicDownloader.getInstance().add_to_queue(id, title, fetcher)
+        MusicDownloader.getInstance().add_to_queue(id, title)
         return False
     return True
 
@@ -46,13 +46,11 @@ def playlist(url):
 
 
 def analizeVideos(videos, bar):
-    fetcher = MusicDownloader.getInstance().get_fetcher()
+
     suma = 0
     for v in videos:
         bar.next()
-        add_to_queue(
-            v["id"], MusicDownloader.getInstance().format_title(v["title"]), fetcher
-        )
+        add_to_queue(v["id"], MusicDownloader.getInstance().format_title(v["title"]))
 
         m, s = v["duration"].split(":")
         suma += int(m) * 60 + int(s)
